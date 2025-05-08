@@ -1,0 +1,242 @@
+HTML
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple Gen AI App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <h1>Simple AI Text Generator</h1>
+    <div class="input-section">
+      <textarea id="userInput" placeholder="Type your prompt here..."></textarea>
+      <button id="generateBtn">Generate</button>
+    </div>
+    <div class="output-section">
+      <h2>AI Response:</h2>
+      <div id="aiOutput" class="output-box">Your generated text will appear here...</div>
+    </div>
+    <div class="loading" id="loadingIndicator" style="display: none;">
+      <div class="spinner"></div>
+      <p>Generating response...</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+CSS
+
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f5f5f5;
+  margin: 0;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+.app-container {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  width: 100%;
+  max-width: 800px;
+}
+
+h1 {
+  color: #333;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.input-section {
+  margin-bottom: 20px;
+}
+
+textarea {
+  width: 100%;
+  height: 100px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  resize: vertical;
+  font-size: 16px;
+  margin-bottom: 10px;
+}
+
+button {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #45a049;
+}
+
+.output-section {
+  margin-top: 30px;
+}
+
+h2 {
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.output-box {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  min-height: 100px;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #4CAF50;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+
+
+
+JS
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  const generateBtn = document.getElementById('generateBtn');
+  const userInput = document.getElementById('userInput');
+  const aiOutput = document.getElementById('aiOutput');
+  const loadingIndicator = document.getElementById('loadingIndicator');
+
+  // Simple knowledge base for our "AI"
+  const knowledgeBase = {
+    greetings: ["Hello! How can I assist you today?", "Hi there! What would you like to know?", "Greetings! I'm here to help."],
+    questions: {
+      "name": "I'm a simple AI text generator created to demonstrate basic functionality.",
+      "age": "I don't have an age as I'm just a program running in your browser.",
+      "weather": "I'm not connected to live data, but I hope the weather is nice where you are!",
+      "default": "That's an interesting question. I'm a simple AI so my knowledge is limited, but I'll try my best to help."
+    },
+    farewells: ["Goodbye! Have a great day!", "Farewell! Come back anytime.", "See you later!"],
+    compliments: ["You're doing great!", "That's a wonderful question!", "I appreciate your curiosity!"],
+    jokes: [
+      "Why don't scientists trust atoms? Because they make up everything!",
+      "Did you hear about the mathematician who's afraid of negative numbers? He'll stop at nothing to avoid them!",
+      "Why don't skeletons fight each other? They don't have the guts!"
+    ]
+  };
+
+  generateBtn.addEventListener('click', function() {
+    const inputText = userInput.value.trim().toLowerCase();
+     
+    if (!inputText) {
+      aiOutput.textContent = "Please enter some text to generate a response.";
+      return;
+    }
+
+    // Show loading indicator
+    loadingIndicator.style.display = 'flex';
+    aiOutput.textContent = '';
+
+    // Simulate AI processing delay
+    setTimeout(() => {
+      let response = generateResponse(inputText);
+       
+      // Hide loading indicator
+      loadingIndicator.style.display = 'none';
+       
+      // Display the response with a typewriter effect
+      typeWriter(response, aiOutput);
+    }, 1500);
+  });
+
+  function generateResponse(input) {
+    // Check for greetings
+    if (input.includes('hello') || input.includes('hi') || input.includes('hey')) {
+      return getRandomResponse(knowledgeBase.greetings);
+    }
+     
+    // Check for farewells
+    if (input.includes('bye') || input.includes('goodbye') || input.includes('see you')) {
+      return getRandomResponse(knowledgeBase.farewells);
+    }
+     
+    // Check for compliments to the AI
+    if (input.includes('smart') || input.includes('intelligent') || input.includes('great')) {
+      return getRandomResponse(knowledgeBase.compliments) + " Thank you!";
+    }
+     
+    // Check for joke requests
+    if (input.includes('joke') || input.includes('funny')) {
+      return "Here's a joke for you: " + getRandomResponse(knowledgeBase.jokes);
+    }
+     
+    // Check specific questions
+    if (input.includes('name')) {
+      return knowledgeBase.questions.name;
+    }
+     
+    if (input.includes('age') || input.includes('old')) {
+      return knowledgeBase.questions.age;
+    }
+     
+    if (input.includes('weather')) {
+      return knowledgeBase.questions.weather;
+    }
+     
+    // Default response
+    return knowledgeBase.questions.default;
+  }
+
+  function getRandomResponse(responses) {
+    return responses[Math.floor(Math.random() * responses.length)];
+  }
+
+  // Simple typewriter effect for displaying text
+  function typeWriter(text, element, i = 0) {
+    if (i < text.length) {
+      element.textContent += text.charAt(i);
+      setTimeout(() => typeWriter(text, element, i + 1), 20);
+    }
+  }
+});
